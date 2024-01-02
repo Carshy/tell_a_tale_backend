@@ -9,10 +9,7 @@ Rails.application.routes.draw do
       namespace :users do
         devise_scope :user do
           resources :registrations, only: [:create]
-          resources :sessions, only: [:create, :destroy]
-          # post 'sign_up', to: 'registrations#create'
-          # post 'sign_in', to: 'sessions#create'
-          # delete 'sign_out', to: 'sessions#destroy'
+          resources :sessions, only: [:index, :create, :destroy]
         end
       end
     end
