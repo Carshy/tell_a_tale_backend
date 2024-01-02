@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class Api::V1::Users::RegistrationsController < Devise::RegistrationsController
   # before_action :configure_sign_up_params, only: [:create]
   # before_action :configure_account_update_params, only: [:update]
@@ -8,26 +6,18 @@ class Api::V1::Users::RegistrationsController < Devise::RegistrationsController
 
   private
 
-  def respond_with(resource, options={})
+  def respond_with(resource, _options = {})
     if resource.persisted?
       render json: {
         status: { code: 200, message: 'User Created Successfully', data: resource }
       }, status: :ok
     else
       render json: {
-        status: {message: 'User not created successful',
-          errors: resource.errors.full_messages}, status: :unprocessable_entity
-      }
+        status: { message: 'User not created successful',
+                  errors: resource.errors.full_messages }
+      }, status: :unprocessable_entity
     end
   end
-
-
-
-
-
-
-
-
 
   # skip_before_action :verify_authenticity_token, if: -> { request.format.json? }
 
@@ -47,5 +37,4 @@ class Api::V1::Users::RegistrationsController < Devise::RegistrationsController
   # def sign_up_params
   #   params.require(:user).permit(:email, :password, :password_confirmation, :first_name, :last_name, :bio, :photo)
   # end
-
 end
