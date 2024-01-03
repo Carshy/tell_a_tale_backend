@@ -9,7 +9,8 @@ Rails.application.routes.draw do
       namespace :users do
         devise_scope :user do
           resources :registrations, only: [:create]
-          resources :sessions, only: [:index, :create, :destroy]
+          delete '/sessions' => 'sessions#destroy'
+          # resources :sessions, only: [:destroy]
         end
       end
     end

@@ -3,13 +3,16 @@
 class Api::V1::Users::SessionsController < Devise::SessionsController
   # before_action :configure_sign_in_params, only: [:create]
   # skip_before_action :verify_authenticity_token, if: -> { request.format.json? }
-  
-  def index
-    @users = User.all
-    render json: @user, status: :created
-  end
 
   respond_to :json
+
+  def destroy
+    sign_out(resource_name)
+    render json: {
+      status: 200,
+      message: 'Signed Out Successfully'
+    }, status: :ok
+  end
 
   private
   
@@ -19,23 +22,4 @@ class Api::V1::Users::SessionsController < Devise::SessionsController
         data: current_user }
     }, status: :ok
   end
-
-  def respond_to_on_destroy
-    jwt_payload = JWT.decode(request.headers['Authorization'].split
-      (' ')[1], Rails.application.credentials.fetch(:
-      secret_key_base)).first
-    current_user = User.find(jwt_payload['sub'])
-    if current_user
-      render json: {
-        status: 200,
-        message: 'Signed Out Successfully'
-      }, status: :ok
-    else
-      render json: {
-        status: 401,
-        message: 'User has no active session'
-      }, status: :unauthorized
-    end
-  end
-  
 end
