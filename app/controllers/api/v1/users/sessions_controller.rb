@@ -17,6 +17,8 @@ class Api::V1::Users::SessionsController < Devise::SessionsController
   private
   
   def respond_with(resource, options={})
+    token = Warden::JWTAuth::UserEncoder.new.call(resource, :user, nil)
+    response.headers['Authorization'] = "Bearer #{token}"
     render json: {
       status: { code: 200, message: 'User signed in successfully',
         data: current_user }

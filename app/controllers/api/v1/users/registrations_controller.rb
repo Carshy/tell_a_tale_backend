@@ -6,9 +6,8 @@ class Api::V1::Users::RegistrationsController < Devise::RegistrationsController
 
   private
 
-  def respond_with(resource, _options = {})
+  def respond_with(resource, options = {})
     if resource.persisted?
-      # token = Warden::JWTAuth::UserEncoder.new.call(resource, :user, nil)
       token = Warden::JWTAuth::UserEncoder.new.call(resource, :user, nil)
 
       response.headers['Authorization'] = "Bearer #{token}"
