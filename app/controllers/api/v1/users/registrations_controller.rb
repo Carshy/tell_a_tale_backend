@@ -12,13 +12,10 @@ class Api::V1::Users::RegistrationsController < Devise::RegistrationsController
     if @user.save
       token = Warden::JWTAuth::UserEncoder.new.call(resource, :user, nil)
       response.headers['Authorization'] = "Bearer #{token}"
-      # render json: @user, status: :created
       render json: {
-        @user,
         status: { code: 200, message: 'User Created Successfully', data: resource, token: token }
       }, status: :ok
     else
-      # render json: @user.errors, status: :unprocessable_entity
       render json: {
         status: { message: 'User not created successful',
                   errors: resource.errors.full_messages }
