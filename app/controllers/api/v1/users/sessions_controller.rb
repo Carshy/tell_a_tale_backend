@@ -3,8 +3,23 @@
 class Api::V1::Users::SessionsController < Devise::SessionsController
   # before_action :configure_sign_in_params, only: [:create]
   # skip_before_action :verify_authenticity_token, if: -> { request.format.json? }
+  
+  def create
+    db_user = User.find_by(email: sign_in_params[:email])
+    if db_user.present? && db_user.valid_password?(sign_in_params[:password])
+      sign_in(resource_name, db_user)
+      token = Warden::JWTAuth::UserEncoder.new.call(db_user, :user, nil)
+      response.headers['Authorization'] = "Bearer #{token}"
 
-  respond_to :json
+      render json: {
+        status: {code: 200, message: "User signed in successfully", data: resource, token: token}
+      }, status: :ok
+    else
+      render json: {
+        status: {message: "Invalid email or password"}
+      }, status: :unauthorized
+    end
+  end
 
   def destroy
     sign_out(resource_name)
@@ -15,13 +30,21 @@ class Api::V1::Users::SessionsController < Devise::SessionsController
   end
 
   private
-  
-  def respond_with(resource, options={})
-    token = Warden::JWTAuth::UserEncoder.new.call(resource, :user, nil)
-    response.headers['Authorization'] = "Bearer #{token}"
-    render json: {
-      status: { code: 200, message: 'User signed in successfully',
-        data: current_user }
-    }, status: :ok
+
+  def sign_in_params
+    params.require(:user).permit(:email, :password)
   end
+  
+  # respond_to :json
+
+  # private
+  
+  # def respond_with(resource, options={})
+  #   token = Warden::JWTAuth::UserEncoder.new.call(resource, :user, nil)
+  #   response.headers['Authorization'] = "Bearer #{token}"
+  #   render json: {
+  #     status: { code: 200, message: 'User signed in successfully',
+  #       data: current_user }
+  #   }, status: :ok
+  # end
 end
