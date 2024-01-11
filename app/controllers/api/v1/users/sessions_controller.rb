@@ -12,7 +12,7 @@ class Api::V1::Users::SessionsController < Devise::SessionsController
       response.headers['Authorization'] = "Bearer #{token}"
 
       render json: {
-        status: {code: 200, message: "User signed in successfully", data: resource, token: token}
+        status: {code: 200, message: "You have successfully signed in #{db_user.first_name}", data: resource, token: token}
       }, status: :ok
     else
       render json: {
