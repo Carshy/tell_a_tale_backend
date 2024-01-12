@@ -13,7 +13,7 @@ class Api::V1::Users::RegistrationsController < Devise::RegistrationsController
       token = Warden::JWTAuth::UserEncoder.new.call(resource, :user, nil)
       response.headers['Authorization'] = "Bearer #{token}"
       render json: {
-        status: { code: 200, message: 'User Created Successfully', data: resource, token: token }
+        status: { code: 200, message: 'User Created Successfully', data: resource }
       }, status: :ok
     else
       render json: {
