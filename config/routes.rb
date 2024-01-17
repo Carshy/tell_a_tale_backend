@@ -1,6 +1,17 @@
 Rails.application.routes.draw do
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
-
-  # Defines the root path route ("/")
-  # root "articles#index"
+  devise_for :users, controllers: {
+    registrations: 'api/v1/users/registrations',
+    sessions: 'api/v1/users/sessions'
+  }
+  
+  namespace :api do
+    namespace :v1 do
+      namespace :users do
+        devise_scope :user do
+          resources :registrations, only: [:create]
+          resource :sessions, only: [:create, :destroy]
+        end
+      end
+    end
+  end
 end
